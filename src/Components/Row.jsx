@@ -3,6 +3,7 @@ import axios from '../axios';
 import '../styles/Row.css';
 import Youtube from "react-youtube";
 import movieTrailer from 'movie-trailer';
+import Alert from '@material-ui/lab/Alert';
 const base_url = "https://image.tmdb.org/t/p/original/";
 
 function Row({ title, fetchUrl, isLargeRow }) {
@@ -44,22 +45,28 @@ function Row({ title, fetchUrl, isLargeRow }) {
     }
   };
   return (
-    <div className="row">
-      <h2>{title}</h2>
-      <div className="row__posters">
+		<div className="row">
+			<h2>{title}</h2>
+			<div className="row__posters">
+				{movies.map((movie) => (
+					<img
+						key={movie.id}
+						onClick={() => handleClick(movie)}
+						className={`row__poster ${isLargeRow && 'row__posterLarge'}`}
+						src={`${base_url}${
+							isLargeRow ? movie.poster_path : movie.backdrop_path
+						}`}
+						alt={movie.name}
+					/>
+				))}
+			</div>
 
-        {movies.map(movie => (
-          <img key={movie.id}
-          onClick={() => handleClick(movie)}
-          className={`row__poster ${isLargeRow && "row__posterLarge"}`}
-          src={`${base_url}${isLargeRow ? movie.poster_path : movie.backdrop_path}`}
-          alt={movie.name}/>
-        ))}
-      </div>
-
-      {trailerUrl && <Youtube videoId={trailerUrl} opts={opts} />}
-    </div>
-  )
+			{trailerUrl && <Youtube videoId={trailerUrl} opts={opts} />}
+			{trailerNotFound && (
+				<Alert severity="error">Sorry! Trailer not found</Alert>
+			)}
+		</div>
+	);
 }
 
 export default Row
